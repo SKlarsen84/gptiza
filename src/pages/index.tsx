@@ -1,13 +1,61 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 import { api } from "../utils/api";
+import { useState, useRef, useEffect } from "react";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const { transcript, resetTranscript } = useSpeechRecognition();
+  const [isListening, setIsListening] = useState(false);
+  const microphoneRef = useRef<HTMLDivElement>(null);
+  const [hydrated, setHydrated] = useState(false);
 
+  useEffect(() => {
+    // This forces a rerender, so the date is rendered
+    // the second time but not the first
+    setHydrated(true);
+  }, []);
+  // if (!hydrated) {
+  //   // Returns null on first render, so the client and server match
+  //   return null;
+  // }
+
+  if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
+    return (
+      <div className="mircophone-container">
+        Browser is not Support Speech Recognition.
+      </div>
+    );
+  }
+
+  const handleListing = () => {
+    if (microphoneRef && microphoneRef.current) {
+      setIsListening(true);
+
+      SpeechRecognition.startListening({
+        continuous: true,
+      });
+    }
+  };
+  const stopHandle = () => {
+    setIsListening(false);
+
+    SpeechRecognition.stopListening();
+  };
+  const handleReset = () => {
+    stopHandle();
+    resetTranscript();
+  };
   return (
     <>
       <Head>
@@ -51,6 +99,34 @@ const Home: NextPage = () => {
             <AuthShowcase />
           </div>
         </div>
+
+        <div className="microphone-wrapper">
+          <div className="mircophone-container">
+            <div
+              className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+              ref={microphoneRef}
+              onClick={handleListing}
+            >
+              click
+            </div>
+            <div className="microphone-status">
+              {isListening ? "Listening........." : "Click to start Listening"}
+            </div>
+            {isListening && (
+              <button className="microphone-stop btn" onClick={stopHandle}>
+                Stop
+              </button>
+            )}
+          </div>
+          {hydrated && transcript && (
+            <div className="microphone-result-container">
+              <div className="microphone-result-text">{transcript}</div>
+              <button className="microphone-reset btn" onClick={handleReset}>
+                Reset
+              </button>
+            </div>
+          )}
+        </div>
       </main>
     </>
   );
@@ -63,7 +139,7 @@ const AuthShowcase: React.FC = () => {
 
   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
     undefined, // no input
-    { enabled: sessionData?.user !== undefined },
+    { enabled: sessionData?.user !== undefined }
   );
 
   return (
