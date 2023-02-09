@@ -11,32 +11,63 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 
 import { api } from "../utils/api";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { Configuration, OpenAIApi } from "openai";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const { transcript, resetTranscript } = useSpeechRecognition();
+  const [lastUserSentence, setLastUserSentence] = useState(
+    "hey  there. I am feeling overwhelmed."
+  );
   const [isListening, setIsListening] = useState(false);
   const microphoneRef = useRef<HTMLDivElement>(null);
   const [hydrated, setHydrated] = useState(false);
+  const [robotMood, setRobotMood] = useState<"friendly" | "moody" | "freudian">(
+    "friendly"
+  );
+  const {
+    data: robotAnswer,
+    refetch,
+    isLoading,
+  } = api.openAI.getResponse.useQuery(
+    {
+      text: lastUserSentence,
+      responseMood: robotMood,
+    },
+    { enabled: false }
+  );
 
   useEffect(() => {
     // This forces a rerender, so the date is rendered
     // the second time but not the first
     setHydrated(true);
   }, []);
-  // if (!hydrated) {
-  //   // Returns null on first render, so the client and server match
-  //   return null;
-  // }
 
-  if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
+  useEffect(() => {
+    if (robotAnswer && robotAnswer.response.length > 0) {
+      speechSynthesis.cancel();
+      const msg = new SpeechSynthesisUtterance();
+      msg.text = robotAnswer.response;
+      msg.lang = "en-US";
+      window.speechSynthesis.speak(msg);
+    }
+  }, [robotAnswer, robotAnswer?.response]);
+
+  if (hydrated && !SpeechRecognition.browserSupportsSpeechRecognition()) {
     return (
       <div className="mircophone-container">
         Browser is not Support Speech Recognition.
       </div>
     );
   }
+
+  const sayHello = () => {
+    speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance();
+    msg.text = "Hello World";
+    msg.lang = "en-US";
+    window.speechSynthesis.speak(msg);
+  };
 
   const handleListing = () => {
     if (microphoneRef && microphoneRef.current) {
@@ -56,6 +87,11 @@ const Home: NextPage = () => {
     stopHandle();
     resetTranscript();
   };
+
+  if (!hydrated) {
+    // Returns null on first render, so the client and server match
+    return null;
+  }
   return (
     <>
       <Head>
@@ -66,9 +102,20 @@ const Home: NextPage = () => {
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+            Robo<span className="text-[hsl(280,100%,70%)]">Shrink</span> demo
           </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+          <div className="flex w-2/12	 flex-col items-center  gap-2 ">
+            <select
+              className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100"
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+              onChange={(e) => setRobotMood(e.target.value as any)}
+            >
+              <option value="friendly">Friendly therapist</option>
+              <option value="moody">Moody therapist</option>
+              <option value="freudian">Freudian therapist</option>
+            </select>
+          </div>
+          {/* <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
             <Link
               className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
               href="https://create.t3.gg/en/usage/first-steps"
@@ -91,16 +138,19 @@ const Home: NextPage = () => {
                 to deploy it.
               </div>
             </Link>
-          </div>
-          <div className="flex flex-col items-center gap-2">
+          </div> */}
+          <div className="flex flex-col items-center gap-2 ">
+            {/*select dropdown with the available robot moods */}
+
             <p className="text-2xl text-white">
-              {hello.data ? hello.data.greeting : "Loading tRPC query..."}
+              {isLoading ? "Waiting for you to type something..." : ""}
+              {robotAnswer ? robotAnswer.response : ""}
             </p>
-            <AuthShowcase />
+            {/* <AuthShowcase /> */}
           </div>
         </div>
 
-        <div className="microphone-wrapper">
+        {/* <div className="microphone-wrapper">
           <div className="mircophone-container">
             <div
               className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
@@ -126,6 +176,24 @@ const Home: NextPage = () => {
               </button>
             </div>
           )}
+        </div> */}
+
+        <div className="flex w-5/12	 flex-col items-center  gap-2 ">
+          {/* wide white input field  */}
+          <input
+            type="text"
+            className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+            value={lastUserSentence}
+            placeholder="Enter Text"
+            onChange={(e) => setLastUserSentence(e.target.value)}
+          />
+
+          <button
+            className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+            onClick={() => void refetch()}
+          >
+            Say this to the shrink
+          </button>
         </div>
       </main>
     </>
