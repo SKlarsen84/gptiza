@@ -4,16 +4,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-
 import { api } from "../utils/api";
-import { useState, useRef, useEffect, useMemo } from "react";
-import { Configuration, OpenAIApi } from "openai";
-
+import { useState, useRef, useEffect } from "react";
+import { SvgDrawing } from "../components/Svg";
+import ShrinkGirl from "../components/ShrinkGirl";
+import Script from "next/script";
+import gsap from "gsap";
+import Link from "next/link";
 const Home: NextPage = () => {
   const { transcript, resetTranscript } = useSpeechRecognition();
   const [lastUserSentence, setLastUserSentence] = useState(
@@ -25,6 +26,7 @@ const Home: NextPage = () => {
   const [robotMood, setRobotMood] = useState<"friendly" | "moody" | "freudian">(
     "friendly"
   );
+
   const {
     data: robotAnswer,
     refetch,
@@ -61,12 +63,8 @@ const Home: NextPage = () => {
     );
   }
 
-  const sayHello = () => {
-    speechSynthesis.cancel();
-    const msg = new SpeechSynthesisUtterance();
-    msg.text = "Hello World";
-    msg.lang = "en-US";
-    window.speechSynthesis.speak(msg);
+  const login = () => {
+    console.log("log in");
   };
 
   const handleListing = () => {
@@ -100,12 +98,25 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        {/* upper right corner login button */}
+        <div className="absolute top-4 right-4">
+          <button
+            className="inline-flex items-center rounded-md border border-transparent bg-[#2e026d] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#15162c] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100"
+            onClick={() => {
+              login();
+            }}
+          >
+            Login
+          </button>
+        </div>
+
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Robo<span className="text-[hsl(280,100%,70%)]">Shrink</span> demo
+            Robo<span className="text-[hsl(280,100%,70%)]">Shrink</span>
           </h1>
-          <div className="flex w-2/12	 flex-col items-center  gap-2 ">
-            <select
+          <div className="w-12/12 flex	 flex-col items-center  gap-2 ">
+            <ShrinkGirl />
+            {/* <select
               className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100"
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
               onChange={(e) => setRobotMood(e.target.value as any)}
@@ -113,44 +124,19 @@ const Home: NextPage = () => {
               <option value="friendly">Friendly therapist</option>
               <option value="moody">Moody therapist</option>
               <option value="freudian">Freudian therapist</option>
-            </select>
+            </select> */}
           </div>
-          {/* <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div> */}
           <div className="flex flex-col items-center gap-2 ">
             {/*select dropdown with the available robot moods */}
 
-            <p className="text-2xl text-white">
+            <p className="text-2l text-white">
               {isLoading ? "Waiting for you to type something..." : ""}
               {robotAnswer ? robotAnswer.response : ""}
             </p>
             {/* <AuthShowcase /> */}
           </div>
-        </div>
 
-        {/* <div className="microphone-wrapper">
+          {/* <div className="microphone-wrapper">
           <div className="mircophone-container">
             <div
               className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
@@ -178,22 +164,22 @@ const Home: NextPage = () => {
           )}
         </div> */}
 
-        <div className="flex w-5/12	 flex-col items-center  gap-2 ">
-          {/* wide white input field  */}
-          <input
-            type="text"
-            className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-            value={lastUserSentence}
-            placeholder="Enter Text"
-            onChange={(e) => setLastUserSentence(e.target.value)}
-          />
-
-          <button
-            className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-            onClick={() => void refetch()}
-          >
-            Say this to the shrink
-          </button>
+          <div className="flex w-full flex-row items-center  gap-2 ">
+            {/* wide white input field  */}
+            <input
+              type="text"
+              className="sm:text-md w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              value={lastUserSentence}
+              placeholder="Enter Text"
+              onChange={(e) => setLastUserSentence(e.target.value)}
+            />
+            <button
+              className="bg-white/4 rounded-full px-4 py-1 font-semibold text-white no-underline transition hover:bg-white/20"
+              onClick={() => void refetch()}
+            >
+              Say this
+            </button>
+          </div>
         </div>
       </main>
     </>
