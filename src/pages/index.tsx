@@ -58,13 +58,8 @@ const Home: NextPage = () => {
           setVoiceList(voices.map((v) => v.name));
           console.log(voiceList);
           msg.voice = voices.find(
-            (v) => v.name === "Google UK English Female"
+            (v) => v.name === "Google UK English Female" || v.name === "Ellen"
           ) as SpeechSynthesisVoice;
-          if (msg.voice === undefined) {
-            msg.voice = voices.find(
-              (v) => v.name === "Ellen"
-            ) as SpeechSynthesisVoice;
-          }
           msg.text = robotAnswer.response;
           speechSynthesis.speak(msg);
           msg.lang = "en-US";
@@ -157,7 +152,6 @@ const Home: NextPage = () => {
             <p className="text-2l text-white">
               {isLoading ? "Waiting for you to type something..." : ""}
               {robotAnswer ? robotAnswer.response : ""}
-              {JSON.stringify(voiceList)}
             </p>
 
             {/* <AuthShowcase /> */}
