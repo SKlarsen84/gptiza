@@ -17,20 +17,20 @@ export const SvgDrawing = () => {
           y2="36.93"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0" stopColor="#dfad41" />
-          <stop offset="0.01" stopColor="#dfad41" />
-          <stop offset="0.19" stopColor="#94722a" />
-          <stop offset="0.35" stopColor="#846525" />
-          <stop offset="0.47" stopColor="#765a21" />
-          <stop offset="0.54" stopColor="#5c4519" />
-          <stop offset="0.6" stopColor="#37270d" />
-          <stop offset="1" stopColor="#0f0801" />
+          <stop offset="0" stopColor="#fff5cc" />
+          <stop offset="0.01" stopColor="#faf0c8" />
+          <stop offset="0.19" stopColor="#c2b599" />
+          <stop offset="0.35" stopColor="#998977" />
+          <stop offset="0.47" stopColor="#806f62" />
+          <stop offset="0.54" stopColor="#77655a" />
+          <stop offset="0.6" stopColor="#77655a" />
+          <stop offset="1" stopColor="#77655a" />
         </linearGradient>
       </defs>
       <path
         className="bg"
         d="M39 153.73s31.57 19.71 77.26 15.21 90.18-37.23 90.36-72.33-10.51-57-35.28-63-50.22 17-76.31 20-60.12-15.88-78.32 2.51S-4.88 125.2 39 153.73z"
-        fill="#BF5DF2"
+        fill="rgb(111, 220, 191)"
       />
       <g clipPath="url(#background-clip)">
         <g className="me" opacity="0">
@@ -209,7 +209,7 @@ export const SvgDrawing = () => {
               <path
                 className="hair-front"
                 d="M134.1,57.61C129.22,51.79,118,45,115.33,44.84s-13-1.87-20.65,0-16,4.51-18.77,8.26-6.17,18-4.77,24.41c0,0,3-3.09,10.46-5.73h0s.74-6.33,1.45-7.18a32.29,32.29,0,0,0-.1,6.73,59.67,59.67,0,0,1,8.22-2,37,37,0,0,1,.25-8.11,67.11,67.11,0,0,0,.54,8c2-.32,4.18-.59,6.52-.78h0s.18-2.82.61-5.5c0,0,.28,3.33.6,5.42,1.78-.12,3.64-.19,5.62-.21a76.76,76.76,0,0,1,9.11.45c-.05-2.15,0-6.82-.22-7.36s1.07,2.06,1.54,7.52a51.14,51.14,0,0,1,8.84,1.92c.23-2.37.41-5.93-.3-7.88,0,0,2.1,5,1.9,8.42h0c8.36,3,11.06,7.25,11.06,7.25S139,63.43,134.1,57.61Z"
-                fill="#241807"
+                fill="#77655a"
               />
             </g>
           </g>

@@ -207,17 +207,17 @@ const Home: NextPage = () => {
           )}
         </div> */}
 
-          <div className="flex w-full flex-row items-center  gap-2 ">
+          <div className="flex w-full flex-row items-center justify-center">
             {/* wide white input field  */}
             <input
               type="text"
-              className="sm:text-md w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className="sm:text-md  w-full flex-col items-center rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:w-full lg:w-6/12"
               value={lastUserSentence}
               placeholder="Enter Text"
               onChange={(e) => setLastUserSentence(e.target.value)}
             />
             <button
-              className="bg-white/4 rounded-full px-4 py-1 font-semibold text-white no-underline transition hover:bg-white/20"
+              className="bg-white/4 mx-4 rounded-full px-4 py-1 font-semibold text-white no-underline transition hover:bg-white/20"
               onClick={() => void refetch()}
             >
               Say this
