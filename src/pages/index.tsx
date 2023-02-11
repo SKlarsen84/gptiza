@@ -70,7 +70,7 @@ const Home: NextPage = () => {
             else speechSynthesis.resume();
           }, 1000);
         }
-        robotAnswer.response = "";
+    
       }, 200);
     }
   }, [robotAnswer, robotAnswer?.response]);
