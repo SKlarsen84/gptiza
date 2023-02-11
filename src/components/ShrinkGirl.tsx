@@ -398,12 +398,13 @@ window.addEventListener("resize", updateWindowSize);
           
          `}</Script>
 
-      <Script
+      {/* <Script
         src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.1/gsap.min.js"
         onLoad={() => {
           console.log("gsap Script has loaded");
         }}
-      ></Script>
+        strategy = "beforeInteractive"
+      ></Script> */}
       <SvgDrawing />
     </>
   );
