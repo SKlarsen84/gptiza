@@ -60,6 +60,11 @@ const Home: NextPage = () => {
           msg.voice = voices.find(
             (v) => v.name === "Google UK English Female"
           ) as SpeechSynthesisVoice;
+          if (msg.voice === undefined) {
+            msg.voice = voices.find(
+              (v) => v.name === "Ellen"
+            ) as SpeechSynthesisVoice;
+          }
           msg.text = robotAnswer.response;
           speechSynthesis.speak(msg);
           msg.lang = "en-US";
