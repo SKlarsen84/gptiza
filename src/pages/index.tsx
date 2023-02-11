@@ -58,7 +58,7 @@ const Home: NextPage = () => {
           setVoiceList(voices.map((v) => v.name));
           console.log(voiceList);
           msg.voice = voices.find(
-            (v) => v.name === "Google UK English Female" || v.name === "Ellen"
+            (v) => v.name === "Google UK English Female" || v.name === "Karen"
           ) as SpeechSynthesisVoice;
           msg.text = robotAnswer.response;
           speechSynthesis.speak(msg);
