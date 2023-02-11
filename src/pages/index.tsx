@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-floating-promises */
@@ -10,11 +11,9 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import { api } from "../utils/api";
 import { useState, useRef, useEffect } from "react";
-import { SvgDrawing } from "../components/Svg";
 import ShrinkGirl from "../components/ShrinkGirl";
-import Script from "next/script";
-import gsap from "gsap";
-import Link from "next/link";
+import styled, { keyframes } from "styled-components";
+
 const Home: NextPage = () => {
   const { transcript, resetTranscript } = useSpeechRecognition();
   const [lastUserSentence, setLastUserSentence] = useState(
@@ -46,6 +45,32 @@ const Home: NextPage = () => {
     setHydrated(true);
   }, []);
 
+  const breatheAnimation = keyframes`
+ 0% { -webkit-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    transform: scale(0.9); }
+ 25% {   -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1); }
+ 60% {   -webkit-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    transform: scale(0.9);}
+ 100% {   -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
+  }}`;
+
+  const BreathingText = styled.div`
+    width: 300px;
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+    border-radius: 2px;
+    text-align: center;
+    animation-name: ${breatheAnimation};
+    animation-duration: 8s;
+    animation-iteration-count: infinite;
+  `;
+
   useEffect(() => {
     if (robotAnswer && robotAnswer.response.length > 0) {
       let voices;
@@ -70,7 +95,6 @@ const Home: NextPage = () => {
             else speechSynthesis.resume();
           }, 1000);
         }
-    
       }, 200);
     }
   }, [robotAnswer, robotAnswer?.response]);
@@ -118,21 +142,9 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
-        {/* upper right corner login button */}
-        <div className="absolute top-4 right-4">
-          <button
-            className="inline-flex items-center rounded-md border border-transparent bg-[#2e026d] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#15162c] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100"
-            onClick={() => {
-              login();
-            }}
-          >
-            Login
-          </button>
-        </div>
-
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-            Robo<span className="text-[hsl(280,100%,70%)]">Shrink</span>
+            Gee<span className="text-[hsl(280,100%,70%)]">pies</span>
           </h1>
           <div className="w-12/12 flex	 flex-col items-center  gap-2 ">
             <ShrinkGirl />
@@ -149,10 +161,20 @@ const Home: NextPage = () => {
           <div className="flex flex-col items-center gap-2 ">
             {/*select dropdown with the available robot moods */}
 
-            <p className="text-2l text-white">
-              {isLoading ? "Waiting for you to type something..." : ""}
-              {robotAnswer ? robotAnswer.response : ""}
-            </p>
+            <>
+              {isLoading && (
+                <>
+                  <BreathingText>
+                    <p className="text-2l text-white">
+                      Waiting for you to type something...
+                    </p>
+                  </BreathingText>{" "}
+                </>
+              )}
+              <p className="text-2l text-white">
+                {robotAnswer ? robotAnswer.response : ""}
+              </p>
+            </>
 
             {/* <AuthShowcase /> */}
           </div>
@@ -189,7 +211,7 @@ const Home: NextPage = () => {
             {/* wide white input field  */}
             <input
               type="text"
-              className="sm:text-md w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+              className="sm:text-md w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               value={lastUserSentence}
               placeholder="Enter Text"
               onChange={(e) => setLastUserSentence(e.target.value)}
