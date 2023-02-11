@@ -47,11 +47,22 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (robotAnswer && robotAnswer.response.length > 0) {
+      let voices;
+      const timer = setInterval(function () {
+        voices = speechSynthesis.getVoices();
+        console.log(voices);
+        if (voices.length !== 0) {
+          const msg = new SpeechSynthesisUtterance();
+          msg.voice = voices.find(
+            (v) => v.name === "Google UK English Female"
+          ) as SpeechSynthesisVoice;
+          msg.text = robotAnswer.response;
+          speechSynthesis.speak(msg);
+          msg.lang = "en-US";
+          clearInterval(timer);
+        }
+      }, 200);
       speechSynthesis.cancel();
-      const msg = new SpeechSynthesisUtterance();
-      msg.text = robotAnswer.response;
-      msg.lang = "en-US";
-      window.speechSynthesis.speak(msg);
     }
   }, [robotAnswer, robotAnswer?.response]);
 
