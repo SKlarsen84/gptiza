@@ -20,6 +20,7 @@ const Home: NextPage = () => {
   const [lastUserSentence, setLastUserSentence] = useState(
     "hey  there. I am feeling overwhelmed."
   );
+  const [voiceList, setVoiceList] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
   const microphoneRef = useRef<HTMLDivElement>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -54,6 +55,8 @@ const Home: NextPage = () => {
         console.log(voices);
         if (voices.length !== 0) {
           const msg = new SpeechSynthesisUtterance();
+          setVoiceList(voices.map((v) => v.name));
+          console.log(voiceList);
           msg.voice = voices.find(
             (v) => v.name === "Google UK English Female"
           ) as SpeechSynthesisVoice;
@@ -149,7 +152,9 @@ const Home: NextPage = () => {
             <p className="text-2l text-white">
               {isLoading ? "Waiting for you to type something..." : ""}
               {robotAnswer ? robotAnswer.response : ""}
+              {JSON.stringify(voiceList)}
             </p>
+
             {/* <AuthShowcase /> */}
           </div>
 
