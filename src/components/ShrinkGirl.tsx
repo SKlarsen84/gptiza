@@ -7,23 +7,12 @@ import Script from "next/script";
 import { useState, useEffect } from "react";
 import { SvgDrawing } from "../components/Svg";
 
-const ShrinkGirl = () => {
-  //   useEffect(() => {
-  //     const scriptBody = document.createElement("script");
-  //     //write a hello world script
-  //     scriptBody.innerHTML = `
-
-  //   `;
-
-  //     //Wait for the page to load before adding the script
-
-  //     document.body.appendChild(scriptBody);
-
-  //     return () => {
-  //       document.body.removeChild(scriptBody);
-  //     };
-  //   }, []);
-
+interface Props {
+  isSpeaking: boolean;
+}
+const ShrinkGirl = ({ isSpeaking }: Props) => {
+  localStorage.setItem("isSpeaking", isSpeaking.toString());
+  console.log("isSpeaking", isSpeaking);
   return (
     <>
       <Script
@@ -159,30 +148,14 @@ blink
   );
 
 
-const dizzy = gsap.timeline({
+const talky = gsap.timeline({
   paused: true,
   onComplete: () => {
-    dizzyIsPlaying = false;
+    talking = false;
   }
 });
 
-dizzy
-  .to(
-    ".eyes",
-    {
-      duration: 0.01,
-      opacity: 0
-    },
-    0
-  )
-  .to(
-    ".dizzy",
-    {
-      duration: 0.01,
-      opacity: 0.3
-    },
-    0
-  )
+talky
   .to(
     ".mouth",
     {
@@ -200,80 +173,12 @@ dizzy
     0
   )
   .to(
-    ".head, .hair-back, .shadow",
-    {
-      duration: 6,
-      rotate: 2,
-      transformOrigin: "50% 50%",
-      ease: "myWiggle"
-    },
-    0
-  )
-  .to(
-    ".me",
-    {
-      duration: 6,
-      rotate: -2,
-      transformOrigin: "50% 100%",
-      ease: "myWiggle"
-    },
-    0
-  )
-  .to(
-    ".me",
-    {
-      duration: 4,
-      scale: 0.99,
-      transformOrigin: "50% 100%",
-      ease: "lessWiggle"
-    },
-    0
-  )
-  .to(
-    ".dizzy-1",
-    {
-      rotate: -360,
-      duration: 1,
-      repeat: 5,
-      transformOrigin: "50% 50%",
-      ease: "none"
-    },
-    0.01
-  )
-  .to(
-    ".dizzy-2",
-    {
-      rotate: 360,
-      duration: 1,
-      repeat: 5,
-      transformOrigin: "50% 50%",
-      ease: "none"
-    },
-    0.01
-  )
-  .to(
-    ".eyes",
-    {
-      duration: 0.01,
-      opacity: 1
-    },
-    4
-  )
-  .to(
-    ".dizzy",
-    {
-      duration: 0.01,
-      opacity: 0
-    },
-    4
-  )
-  .to(
     ".oh",
     {
       duration: 0.01,
       opacity: 0
     },
-    4
+    0.1
   )
   .to(
     ".mouth",
@@ -281,7 +186,7 @@ dizzy
       duration: 0.01,
       opacity: 1
     },
-    4
+    0.2
   );
 
 // end animation
@@ -298,17 +203,25 @@ function percentage(partialValue, totalValue) {
   return (100 * partialValue) / totalValue;
 }
 
-let dizzyIsPlaying;
+let talking;
 function updateScreenCoords(event) {
-  if (!dizzyIsPlaying) {
+  if (!talking) {
     xPosition = event.clientX;
     yPosition = event.clientY;
   }
-  if (!dizzyIsPlaying && Math.abs(event.movementX) > 500) {
-    dizzyIsPlaying = true;
-    dizzy.restart();
+  if (!talking && Math.abs(event.movementX) > 500) {
+    talking = true;
+    talky.restart();
   }
 }
+
+setInterval( () => {
+  if ( localStorage.getItem('isSpeaking') == 'true') {
+  talking = true;
+  talky.restart();
+  }
+}, 400);
+
 
 let storedXPosition = 0;
 let storedYPosition = 0;
@@ -419,14 +332,6 @@ enableAutoTTS();
 
           
          `}</Script>
-
-      {/* <Script
-        src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.1/gsap.min.js"
-        onLoad={() => {
-          console.log("gsap Script has loaded");
-        }}
-        strategy = "beforeInteractive"
-      ></Script> */}
       <SvgDrawing />
     </>
   );

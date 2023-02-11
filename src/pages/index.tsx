@@ -13,6 +13,7 @@ import { api } from "../utils/api";
 import { useState, useRef, useEffect } from "react";
 import ShrinkGirl from "../components/ShrinkGirl";
 import styled, { keyframes } from "styled-components";
+import Script from "next/script";
 
 const Home: NextPage = () => {
   const { transcript, resetTranscript } = useSpeechRecognition();
@@ -26,6 +27,7 @@ const Home: NextPage = () => {
   const [robotMood, setRobotMood] = useState<"friendly" | "moody" | "freudian">(
     "friendly"
   );
+  const [botSpeaking, setBotSpeaking] = useState(false);
 
   const {
     data: robotAnswer,
@@ -73,6 +75,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (robotAnswer && robotAnswer.response.length > 0) {
+      setBotSpeaking(true);
       let voices;
       speechSynthesis.cancel();
       const timer = setInterval(function () {
@@ -88,14 +91,22 @@ const Home: NextPage = () => {
           msg.text = robotAnswer.response;
           speechSynthesis.speak(msg);
           msg.lang = "en-US";
+
           clearInterval(timer);
-          const r = setInterval(function () {
-            console.log(speechSynthesis.speaking);
-            if (!speechSynthesis.speaking) clearInterval(r);
-            else speechSynthesis.resume();
-          }, 1000);
         }
       }, 200);
+
+      const r = setInterval(function () {
+        if (!speechSynthesis.speaking) {
+          console.log("bot is not speaking");
+          setBotSpeaking(false);
+          clearInterval(r);
+        } else {
+          console.log("bot is speaking");
+          setBotSpeaking(true);
+          speechSynthesis.resume();
+        }
+      }, 1000);
     }
   }, [robotAnswer, robotAnswer?.response]);
 
@@ -147,7 +158,8 @@ const Home: NextPage = () => {
             Gee<span className="text-[hsl(280,100%,70%)]">pies</span>
           </h1>
           <div className="w-12/12 flex	 flex-col items-center  gap-2 ">
-            <ShrinkGirl />
+            <ShrinkGirl isSpeaking={botSpeaking} />
+
             {/* <select
               className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100"
               // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
