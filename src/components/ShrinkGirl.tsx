@@ -178,7 +178,7 @@ talky
       duration: 0.01,
       opacity: 0
     },
-    0.1
+    0.2
   )
   .to(
     ".mouth",
@@ -215,12 +215,12 @@ function updateScreenCoords(event) {
   }
 }
 
-setInterval( () => {
-  if ( localStorage.getItem('isSpeaking') == 'true') {
-  talking = true;
-  talky.restart();
-  }
-}, 400);
+// setInterval( () => {
+//   if ( localStorage.getItem('isSpeaking') == 'true') {
+//   talking = true;
+//   talky.restart();
+//   }
+// }, 700);
 
 
 let storedXPosition = 0;
