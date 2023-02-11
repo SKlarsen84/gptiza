@@ -16,7 +16,7 @@ export const openAiRouter = createTRPCRouter({
         apiKey: process.env.OPENAI_API_KEY,
       });
       const openai = new OpenAIApi(configuration);
-      const prompt = `write a single sentence response to the following, in the style of a ${input.responseMood} psychologist - but add the following theme to your response : loneliness: 
+      const prompt = `write a single sentence response to the following, in the style of a ${input.responseMood} psychologist: 
   
       ${input.text}`;
 

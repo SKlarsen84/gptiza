@@ -48,6 +48,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (robotAnswer && robotAnswer.response.length > 0) {
       let voices;
+      speechSynthesis.cancel();
       const timer = setInterval(function () {
         voices = speechSynthesis.getVoices();
         console.log(voices);
@@ -60,9 +61,14 @@ const Home: NextPage = () => {
           speechSynthesis.speak(msg);
           msg.lang = "en-US";
           clearInterval(timer);
+          const r = setInterval(function () {
+            console.log(speechSynthesis.speaking);
+            if (!speechSynthesis.speaking) clearInterval(r);
+            else speechSynthesis.resume();
+          }, 1000);
         }
+        robotAnswer.response = "";
       }, 200);
-      speechSynthesis.cancel();
     }
   }, [robotAnswer, robotAnswer?.response]);
 
