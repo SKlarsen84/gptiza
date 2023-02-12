@@ -110,13 +110,13 @@ const Home: NextPage = () => {
     }
   }, [robotAnswer, robotAnswer?.response]);
 
-  if (hydrated && !SpeechRecognition.browserSupportsSpeechRecognition()) {
-    return (
-      <div className="mircophone-container">
-        Browser is not Support Speech Recognition.
-      </div>
-    );
-  }
+  // if (hydrated && !SpeechRecognition.browserSupportsSpeechRecognition()) {
+  //   return (
+  //     <div className="mircophone-container">
+  //       Browser is not Support Speech Recognition.
+  //     </div>
+  //   );
+  // }
 
   const login = () => {
     console.log("log in");
@@ -149,7 +149,10 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>Geepies</title>
-        <meta name="description" content="Geepies is a virtual buddy. Don't take it too seriously." />
+        <meta
+          name="description"
+          content="Geepies is a virtual buddy. Don't take it too seriously."
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
