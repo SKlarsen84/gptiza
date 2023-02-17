@@ -239,6 +239,21 @@ const Home: NextPage = () => {
             </button>
           </div>
         </div>
+
+        {/* 
+        foooter showing made with <3 by me  - always absolute bottomg right
+        */}
+        <div className="absolute bottom-0 right-0 p-8">
+          <p className="text-center text-white">
+            Made with <span className="text-[hsl(280,100%,70%)]">❤</span> by{" "}
+            <a
+              className="text-[hsl(280,100%,70%)]"
+              href="mailTo:leafblow@gmail.com"
+            >
+              some guy
+            </a>
+          </p>
+        </div>
       </main>
     </>
   );
