@@ -250,9 +250,11 @@ const Home: NextPage = () => {
               className="text-[hsl(280,100%,70%)]"
               href="mailTo:leafblow@gmail.com"
             >
-              some guy
+              some guy 
             </a>
+            - absolutely not a real therapist - please dont take it too seriously
           </p>
+
         </div>
       </main>
     </>
