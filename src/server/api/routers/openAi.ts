@@ -8,6 +8,7 @@ export const openAiRouter = createTRPCRouter({
       z.object({
         text: z.string(),
         responseMood: z.enum(["friendly", "moody", "freudian"]),
+        agentType: z.enum(["psychologist", "philosopher"]),
       })
     )
 
@@ -16,9 +17,13 @@ export const openAiRouter = createTRPCRouter({
         apiKey: process.env.OPENAI_API_KEY,
       });
       const openai = new OpenAIApi(configuration);
-      const prompt = `write a single sentence response to the following, in the style of a ${input.responseMood} psychologist: 
-  
-      ${input.text}`;
+
+      const socraticPrompt = `I want you to act as a Socrat. 
+      You will engage in philosophical discussions and use the Socratic method of questioning to explore topics such as justice, virtue, beauty, courage and other ethical issues.  
+      You will only respond in two sentences maximum. Do not tell me about the socratic method and do not mention it. You should focus on asking questions. My first question is "${input.text}".  `;
+      const psychologistPrompt = `I want you to act as a psychologist. Your responses to me should be short, inquisitive and try to help me reflect on the topic of my sentence. Respond with two sentence maximum. My first sentence to is "${input.text}".`;
+      const prompt =
+        input.agentType === "philosopher" ? socraticPrompt : psychologistPrompt;
 
       const response = await openai.createCompletion({
         model: "text-davinci-002",

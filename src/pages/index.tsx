@@ -17,9 +17,16 @@ import Script from "next/script";
 
 const Home: NextPage = () => {
   const { transcript, resetTranscript } = useSpeechRecognition();
-  const [lastUserSentence, setLastUserSentence] = useState(
-    "hey  there. I am feeling overwhelmed."
+  const [agentType, setAgentType] = useState<"philosopher" | "psychologist">(
+    "philosopher"
   );
+  const [lastUserSentence, setLastUserSentence] = useState(
+    agentType === "philosopher"
+      ? "Let us discuss the nature of justice"
+      : "hey  there. I am feeling overwhelmed."
+  );
+
+  const [userSentenceHistory, setUserSentenceHistory] = useState<string[]>([]);
   const [voiceList, setVoiceList] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
   const microphoneRef = useRef<HTMLDivElement>(null);
@@ -35,11 +42,20 @@ const Home: NextPage = () => {
     isLoading,
   } = api.openAI.getResponse.useQuery(
     {
-      text: lastUserSentence,
+      text: userSentenceHistory.join(" "),
       responseMood: robotMood,
+      agentType: "philosopher",
     },
     { enabled: false }
   );
+
+  useEffect(() => {
+    if (agentType === "philosopher") {
+      setLastUserSentence("Let us discuss the nature of justice");
+    } else {
+      setLastUserSentence("hey  there. I am feeling overwhelmed.");
+    }
+  }, [agentType]);
 
   useEffect(() => {
     // This forces a rerender, so the date is rendered
@@ -117,6 +133,22 @@ const Home: NextPage = () => {
   //     </div>
   //   );
   // }
+
+  const fetchAnswer = () => {
+    if (lastUserSentence && lastUserSentence.length > 0) {
+      setUserSentenceHistory([...userSentenceHistory, lastUserSentence]);
+      setLastUserSentence("");
+    } else {
+      console.log("no new sentence");
+    }
+  };
+
+  useEffect(() => {
+    if (userSentenceHistory && userSentenceHistory.length > 0) {
+      console.log(userSentenceHistory);
+      refetch();
+    }
+  }, [refetch, userSentenceHistory]);
 
   const login = () => {
     console.log("log in");
@@ -223,6 +255,31 @@ const Home: NextPage = () => {
         </div> */}
 
           <div className="flex w-full flex-row items-center justify-center">
+            {/* tab to select either pscyhologist or philosopher agent*/}
+
+            <div className="flex flex-row items-center justify-center gap-2">
+              <button
+                className={`${
+                  agentType === "psychologist" ? "bg-white/20" : "bg-white/4"
+                } mx-4 rounded-full px-4 py-1 font-semibold text-white no-underline transition hover:bg-white/20`}
+                onClick={() => setAgentType("psychologist")}
+              >
+                Psychologist
+              </button>
+              <button
+                className={`${
+                  agentType === "philosopher" ? "bg-white/20" : "bg-white/4"
+                } mx-4 rounded-full px-4 py-1 font-semibold text-white no-underline transition hover:bg-white/20`}
+                onClick={() => setAgentType("philosopher")}
+              >
+                Philosopher
+              </button>
+            </div>
+          </div>
+
+          <div className="flex w-full flex-row items-center justify-center">
+            {/* tab to select either pscyhologist or philosopher agent*/}
+
             {/* wide white input field  */}
             <input
               type="text"
@@ -233,7 +290,7 @@ const Home: NextPage = () => {
             />
             <button
               className="bg-white/4 mx-4 rounded-full px-4 py-1 font-semibold text-white no-underline transition hover:bg-white/20"
-              onClick={() => void refetch()}
+              onClick={fetchAnswer}
             >
               Say this
             </button>
@@ -243,7 +300,7 @@ const Home: NextPage = () => {
         {/* 
         foooter showing made with <3 by me  - always absolute bottomg right
         */}
-        <div className="absolute bottom-0 right-0 p-8">
+        {/* <div className="absolute bottom-0 right-0 p-8">
           <p className="text-center text-white">
             Made with <span className="text-[hsl(280,100%,70%)]">❤</span> by{" "}
             <a
@@ -255,7 +312,7 @@ const Home: NextPage = () => {
             - absolutely not a real therapist - please dont take it too seriously
           </p>
 
-        </div>
+        </div> */}
       </main>
     </>
   );
